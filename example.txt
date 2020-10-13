@@ -1,0 +1,3 @@
+_OBJS = OtherFolderFile.o 
+_OBJS = TestFile.o 
+src\_OBJS = main.o 
