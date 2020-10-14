@@ -41,12 +41,14 @@ std::string recurse(Node* root){
         }   
     }else{
         std::string file = root->current.substr(root->current.find_last_of('.'));
-        if(file == ".cpp"){
-            std::string curFolder = root->current.substr(0, root->current.find_last_of('\\')) + "\\";
-            file = root->current.substr(root->current.find_last_of('\\') + 1);
-            foldersWithFiles.push_back(curFolder);
-            dependencies[curFolder].push_back(file.substr(0,'.'));
-            std::cout << "Added: '" << file << "' from folder: '"<< curFolder << "'\n";
+        if(root->current.substr(root->current.find_last_of('\\') + 1) != "main.cpp"){//index out main method
+            if(file == ".cpp"){
+                std::string curFolder = root->current.substr(0, root->current.find_last_of('\\')) + "\\";
+                file = root->current.substr(root->current.find_last_of('\\') + 1);
+                foldersWithFiles.push_back(curFolder);
+                dependencies[curFolder].push_back(file.substr(0,'.'));
+                std::cout << "Added: '" << file << "' from folder: '"<< curFolder << "'\n";
+            }
         }
     }
 
@@ -57,7 +59,6 @@ std::string recurse(Node* root){
 }
 
 void printRoot(Node* root, int deep = 0){
-    //static std::vector<
     if(root){
         std::string tabs;
         for(int i = 0; i < deep; i++){
@@ -81,19 +82,13 @@ void createMakefile(){
             int lastBackSlash = curFolder.find_last_of('\\');
             std::cout << "Current folder being parsed: '" << curFolder << "'\n";
             if(firstBackSlash == lastBackSlash){ //then there isn't an above folder
-                make_folderName = curFolder;
+                make_folderName = curFolder.substr(0, curFolder.length()-1);
             }else{
-                std::string tmpFileName = curFolder.substr(0, lastBackSlash);
-                std::cout << tmpFileName<<std::endl;
-                std::cout << tmpFileName.find_last_of('\\') << std::endl;
-                std::cout << tmpFileName.substr(curFolder.find_last_of('\\') - 4) << std::endl;
-                make_folderName = tmpFileName.substr(curFolder.find_last_of('\\'));
+                make_folderName = curFolder.substr(0, lastBackSlash);
+                make_folderName = make_folderName.substr(make_folderName.find_last_of('\\')+1);
             }
             std::cout << "Make folder name: " << make_folderName << std::endl;
-            //std::locale loc;
-           // for (std::string::size_type i=0; i<make_folderName.length(); ++i)
-             //   std::cout << std::toupper(make_folderName[i],loc);
-
+            std::transform(make_folderName.begin(), make_folderName.end(),make_folderName.begin(), ::toupper);
 
             myfile << make_folderName << "_OBJS = ";
             for(int fileInFolder = 0; fileInFolder < dependencies[curFolder].size(); fileInFolder++){

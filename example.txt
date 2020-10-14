@@ -1,3 +1,2 @@
-_OBJS = OtherFolderFile.o 
-_OBJS = TestFile.o 
-src\_OBJS = main.o 
+OTHERFOLDER_OBJS = OtherFolderFile.o 
+TEST_OBJS = TestFile.o 
